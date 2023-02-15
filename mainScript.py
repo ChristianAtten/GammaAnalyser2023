@@ -9,7 +9,7 @@ import analyzingFunctions
 import spectrometryConfigurations
 import plottingfunctions
 from datetime import datetime
-
+import scipy
 
 ########################################################################################################################
 # 1. Define Path and File of Spectrum
@@ -25,19 +25,19 @@ from datetime import datetime
 #file = path + "spectrum_eu152_2700s.txt"
 
 # path for fk data
-path='C:/Users/chris/Dropbox/Christian Attenberger/Universität im Fürstentum Liechtenstein/UFL-Liechtenstein_Datenauswertung/GammaRay-Spectrometry/GammaAnalyzer/inputData/datenFeldkirch/Kalibrationsstandard/'
+path='C:/Users/chris/Dropbox/Universität im Fürstentum Liechtenstein/UFL-Liechtenstein_Datenauswertung/GammaRay-Spectrometry/GammaAnalyzer/inputData/datenFeldkirch/Kalibrationsstandard/'
 file = path + "20220401_StandardHiEng_BC9984.csv"
 file = path + "highEng_10_10_2022.csv"
 
 
-path = 'C:/Users/chris/Dropbox/Christian Attenberger/Universität im Fürstentum Liechtenstein/UFL-Liechtenstein_Datenauswertung/GammaRay-Spectrometry/GammaAnalyzer/inputData/datenFeldkirch/Iridium/'
-file = path + "checkcableIridiumWischprobe.csv"
+path = 'C:/Users/chris/Dropbox/Universität im Fürstentum Liechtenstein/UFL-Liechtenstein_Datenauswertung/GammaRay-Spectrometry/GammaAnalyzer/inputData/datenFeldkirch/Iridium/'
+#file = path + "checkcableIridiumWischprobe.csv"
 
 
 
-
-pathData='C:/Users/chris/Dropbox/Christian Attenberger/Universität im Fürstentum Liechtenstein/UFL-Liechtenstein_Datenauswertung/GammaRay-Spectrometry/GammaAnalyzer/'
+pathData='C:/Users/chris/Dropbox/Universität im Fürstentum Liechtenstein/UFL-Liechtenstein_Datenauswertung/GammaRay-Spectrometry/GammaAnalyzer/'
 pathInputData=pathData+'inputData/'
+
 
 
 now = str(datetime.today())
@@ -58,13 +58,13 @@ test2=test.T.to_numpy()
 data=test2
 data=data[0][1:len(data.transpose())]
 #data=np.round(data/1000,0)
-#x=0
+x=0
 ########################################################################################################################
 # 2. Set Spectrometry Configurations in spectrometryConfigurations.py
 ########################################################################################################################
 try:
     # from config import FWHM, HLD, LLD, intensity_threshold  # get config values for use in peak finding algorithm
-    from config_sam import FWHM, HLD, LLD, \
+    from spectrometryConfigurations import FWHM, HLD, LLD, \
         intensity_threshold  # get config values for use in peak finding algorithm
 
 except:
@@ -130,6 +130,7 @@ for i in range(len(locs)):
             locs2.remove(locs[i])
             break
 
+#locs2=[238, 421,1138, 1650, 1720, 1765, 2609,3412]
 # fit the peaks with gaussian and return goodness of fits, areas and FWHMs
 new_locs, goodness_of_fits, fits, net_areas, gross_areas, FWHMs = analyzingFunctions.peak_fitting(x, locs2, FWHM, removed)
 

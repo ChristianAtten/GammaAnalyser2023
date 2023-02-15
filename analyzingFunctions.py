@@ -9,24 +9,25 @@ import analyzingFunctions
 import spectrometryConfigurations
 import plottingfunctions
 from datetime import datetime
+from collections import Counter
 
 
 """Completes y = M*x + c conversions for channel numbers."""
 def loadChannelEnergie(file):
-    from config_sam import c, M
+    from spectrometryConfigurations import c, M
 
     return (M * channel) + c
 
 
 """Completes y = M*x + c conversions for channel numbers."""
 def linear_channel_to_energy(channel):
-    from config_sam import c, M
+    from spectrometryConfigurations import c, M
 
     return (M * channel) + c
 
 """Completes y = ax^2 + bx + c conversions for channel numbers."""
 def parabolic_channel_to_energy(channel):
-    from config_sam import a, b, c
+    from spectrometryConfigurations import a, b, c
 
     return (a * channel ** 2) + (b * channel) + c
 
@@ -105,7 +106,7 @@ def peak_finding(N, z, m, FWHM):
     signals = np.zeros(len(N))
 
     # get confidence factor from config
-    from config_sam import confidence, intensity_threshold
+    from spectrometryConfigurations import confidence, intensity_threshold
 
     # send spectra from array to a list
     x = N.tolist()
@@ -243,12 +244,12 @@ def choose_region_around_index(array, idxs, idx, val):
 """Reads lookup table and attempts to match peaks to isotopes."""
 def source_lookup(pathFile, Es, r2s, peak_areas, corrected):
     try:
-        from config_sam import time
+        from spectrometryConfigurations import time
     except ImportError:
         print("Time value not provided, CPS reported will be total counts")
         time = 1
 
-    from config_sam import category, energy_window_size
+    from spectrometryConfigurations import category, energy_window_size
     energy_ref = pd.read_csv(pathFile,delimiter=';')  # read energy reference
     df = pd.DataFrame(energy_ref)   # turn energy ref into pandas data frame
     d = {}
@@ -456,7 +457,7 @@ def coefficient_of_determination(y, y_fit, n):
 
 """Finds the most likely source causing a peak based on different criteria."""
 def find_optimum_source(d, i, Es, Is):
-    from config_sam import common_isotopes
+    from spectrometryConfigurations import common_isotopes
 
     # if no sources in dataframe for this peak then skip it
     dfi = d["df" + str(i)]
@@ -540,5 +541,10 @@ def find_optimum_source(d, i, Es, Is):
     else:
         arbitrary_confidence_factor = 1
 
-    # return the first one in the list as this is probably the best answer
-    return sources[0], isotope_list[0], absoluteIs[0], arbitrary_confidence_factor
+    if len(Counter(isotope_list))>1:
+        # return the first one in the list as this is probably the best answer
+        return sources[np.argmax(absoluteIs)], isotope_list[isotope_list.index(sources[np.argmax(absoluteIs)].split(' ')[0])],\
+               absoluteIs[np.argmax(absoluteIs)], arbitrary_confidence_factor
+    else:
+        # return the first one in the list as this is probably the best answer
+        return sources[0], isotope_list[0], absoluteIs[0], arbitrary_confidence_factor

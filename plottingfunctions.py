@@ -21,7 +21,7 @@ def plotOutcome(pathOutputData, file, y, df1, fits, FWHMs, net_areas, gross_area
         x = analyzingFunctions.parabolic_channel_to_energy(np.arange(len(y)))
 
     # check discriminators are within the length of the data
-    from config_sam import LLD, HLD
+    from spectrometryConfigurations import LLD, HLD
     if LLD < 0:
         LLD = 0
     if HLD > len(y):
@@ -38,10 +38,10 @@ def plotOutcome(pathOutputData, file, y, df1, fits, FWHMs, net_areas, gross_area
     isotopes = df1["Isotope"]
 
     try:
-        from config_sam import M
+        from spectrometryConfigurations import M
         df1["FWHM (keV)"] = np.around(FWHMs * M, 2)
     except ImportError:
-        from config_sam import a, b
+        from spectrometryConfigurations import a, b
         df1["FWHM (keV)"] = np.around((a * FWHMs ** 2) + (FWHMs * b), 2)
 
     df1["Net Area"] = np.around(net_areas[::2])
