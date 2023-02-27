@@ -47,6 +47,7 @@ if not os.path.exists(pathOutputData):
     os.makedirs(pathOutputData)
 
 isotopeLib = 'IsotopeLibrary_splitted_IR.csv'
+isotopeLib = 'Nuklidbibliothek 2023.csv'
 fileIsotope = pathInputData+isotopeLib
 
 # Read spectrum from txt file
